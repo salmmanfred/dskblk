@@ -5,10 +5,8 @@ use std::sync::Mutex;
 
 use std::{collections::HashMap, thread};
 
-use attohttpc;
 use crate::{block::Block, chain::Chain};
-
-
+use attohttpc;
 
 #[macro_use]
 use lazy_static::lazy_static;
@@ -21,34 +19,30 @@ extern crate wallpaper;
 
 #[get("/pong")]
 async fn pong() -> HttpResponse {
-
     HttpResponse::Ok()
         .content_type("text/plain")
         .header("test", "sample")
         .body("Pong")
 }
 
-
 #[post("/chain")]
 async fn get_chain(req: String) -> HttpResponse {
-    let x:Chain = serde_json::from_str(&req).expect("msg");
+    let x: Chain = serde_json::from_str(&req).expect("msg");
     let big = CHAIN.lock().unwrap().comp_chain(x);
     CHAIN.lock().unwrap().chain = big.chain;
-    
+
     let lat_blok = CHAIN.lock().unwrap().latest().clone();
 
-    
-
+    // ! set latest background when the chain has been validated and added
 
     HttpResponse::Ok()
         .content_type("text/plain")
         .header("test", "sample")
         .body("Ok")
 }
+// ! block function for receving new blocks
 
-
-
-pub async fn server()-> std::io::Result<()>{
+pub async fn server() -> std::io::Result<()> {
     HttpServer::new(|| App::new().service(pong))
         .bind(":8080")?
         .run()
