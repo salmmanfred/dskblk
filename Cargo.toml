@@ -1,0 +1,21 @@
+[package]
+name = "dskblk"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+handy_macros = "1.0.0"
+sha2 = "0.10.2"
+chrono = "0.4"
+hex = "0.4"
+attohttpc = { version = "0.16.1", features = ["json", "form"] }
+actix-web = "3.3.2"
+http ="0.2.4"
+lazy_static = "1.4.0"
+regex = "1.5.4"
+openfile = "2.0.0"
+wallpaper = { version = "3", features = ["from_url"] }
+serde_json = "1.0.85"
+serde = "1.0.144"
