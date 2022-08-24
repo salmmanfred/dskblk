@@ -33,14 +33,14 @@ async fn get_chain(req: String) -> HttpResponse {
 
     let lat_blok = CHAIN.lock().unwrap().latest().clone();
 
-    // ! set latest background when the chain has been validated and added
+    // *TODO: set latest background when the chain has been validated and added
 
     HttpResponse::Ok()
         .content_type("text/plain")
         .header("test", "sample")
         .body("Ok")
 }
-// ! block function for receving new blocks
+// *TODO: block function for receving new blocks
 
 pub async fn server() -> std::io::Result<()> {
     HttpServer::new(|| App::new().service(pong))

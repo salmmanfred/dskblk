@@ -9,7 +9,7 @@ extern crate handy_macros;
 
 #[actix_web::main]
 async fn main() {
-    // ! main function needs cleaning upp and adding of a thread
+    // *TODO: main function needs cleaning upp and adding of a thread
     println!("Hello, world!");
 
     let mut main_chain = chain::Chain::new();
