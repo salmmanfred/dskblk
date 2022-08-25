@@ -43,6 +43,7 @@ async fn get_chain(req: String) -> HttpResponse {
 // *TODO: block function for receving new blocks
 
 pub async fn server() -> std::io::Result<()> {
+    // *TODO: Add /chain in service
     HttpServer::new(|| App::new().service(pong))
         .bind(":8080")?
         .run()

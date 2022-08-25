@@ -33,6 +33,7 @@ impl Block {
     }
     //Validates that the block has the correct prev_hash
     pub fn validate(&self, b: Self) -> bool {
+        // *TODO: Need better validation
         self.prev_hash == b.hash
     }
 
