@@ -20,5 +20,5 @@ async fn main() {
         main_chain.latest(),
     ));
     println!("{:#?}", main_chain);
-    p2ps::server().await;
+    p2ps::server().await.unwrap();
 }

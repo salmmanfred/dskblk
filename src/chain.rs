@@ -21,6 +21,15 @@ impl Chain {
     pub fn latest(&self) -> Block {
         self.chain[self.chain.len() - 1].clone()
     }
+    // get the latest block that does not have main = true
+    pub fn get_latest_non_main(&self)->Block{
+        for block in self.chain.clone(){
+            if !block.main{
+                return block
+            }
+        }
+        panic!("how did he we get here")
+    }
     // function to add block also makes sure its validated
     pub fn add_block(&mut self, b: Block) {
         if b.validate(self.latest()) || self.chain.len() == 0 {
@@ -40,7 +49,7 @@ impl Chain {
     }
     // validates the chain by checking all blocks
     #[allow(dead_code)]
-    pub fn validate_chain(&mut self) -> bool {
+    pub fn validate_chain(&self) -> bool {
         for x in 0..self.chain.len() {
             if x == 0 {
                 continue;
@@ -52,5 +61,11 @@ impl Chain {
             }
         }
         true
+    }
+    // change background function 
+    pub fn change_bg(&self){
+        extern crate wallpaper;
+        let block = self.get_latest_non_main();
+        wallpaper::set_from_url(&block.bg_path).unwrap();
     }
 }

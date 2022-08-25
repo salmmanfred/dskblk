@@ -24,17 +24,23 @@ impl Block {
     //"Genesis" block
     pub fn one_and_only() -> Self {
         Self {
-            bg_path: s!("first"),
+            bg_path: s!("https://preview.redd.it/e08ztfb6yoj91.jpg?width=640&crop=smart&auto=webp&s=4313f9016b78c4255cdb50abc109862c9aa95263"),
             time: 1661244907,
             hash: s!("3e2eed92b1223f9fd4f9bcc1adbe0e00b0e76f827d5eb6298bcfb48c555699c1"),
             prev_hash: s!("first"),
-            main: true,
+            main: false,
         }
     }
     //Validates that the block has the correct prev_hash
     pub fn validate(&self, b: Self) -> bool {
-        // *TODO: Need better validation
-        self.prev_hash == b.hash
+        
+        self.prev_hash == b.hash && self.validate_hash()
+    }
+    //makes sure the hash is what its suppose to be 
+    fn validate_hash(&self)->bool{
+        let t = Self::create_hash(self.bg_path.clone(), self.time);
+        t == self.hash
+
     }
 
     // Creates the hash
