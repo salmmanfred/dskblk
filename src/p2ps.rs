@@ -100,7 +100,7 @@ pub async fn server() -> std::io::Result<()> {
     //sweeps the network to find users
     sweep();
     sweep();
-
+    NETWORK.lock().unwrap().send_chain();
     // spawns user input thread to be able to get inputs
     thread::spawn(||{
 
@@ -189,6 +189,7 @@ impl Network{
     }
     //send a new block to all users 
     pub fn new_block(&mut self, b: Block){
+        CHAIN.lock().unwrap().add_block(b.clone());
         for x in self.users.clone(){
             match attohttpc::post(format!("http://{}:8080/block",x,))
             .header("downloading", "file")
@@ -202,6 +203,18 @@ impl Network{
                     //ok
                 }
             }; 
+        }
+    }
+    pub fn send_chain(&self){
+        let c = CHAIN.lock().unwrap().clone();
+
+        for x in self.users.clone(){
+            println!("Sending chain to user...");
+            attohttpc::post(format!("http://{}:8080/chain",x ))
+            .header("sending", "file")
+            .text(serde_json::to_string(&c).unwrap())
+            .send().unwrap();
+            println!("sent");
         }
     }
 }
@@ -226,17 +239,10 @@ fn sweep() {
                        // add_ip(format!("{}{}.{}", IP_DEF, y, x));
 
                         // println!("http://192.168.68.{}:8080/find", x);
-                        println!("Found user\nSending chain to user...");
+                        println!("Found user");
 
 
-                        let c = CHAIN.lock().unwrap().clone();
-
-
-                        attohttpc::post(format!("http://{}{}.{}:8080/chain", IP_DEF, y, x))
-                        .header("sending", "file")
-                        .text(serde_json::to_string(&c).unwrap())
-                        .send().unwrap();
-                        println!("sent");
+                        
                     }
                 }
             });
