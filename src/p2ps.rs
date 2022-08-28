@@ -1,7 +1,16 @@
+/*
+    TODO: Need to fix the computer not being able to send chain some of the times
+    TODO: Need to make sure that there is only one chain
+    TODO: Fix so that computer that has been on longer can send chain back not just connecting computer
+
+*/
+
+
+
 use actix_web::{get, post, App, HttpRequest, HttpResponse, HttpServer};
 extern crate http;
-//const IP_DEF: &str = "10.61.";
-const IP_DEF: &str = "192.168.";
+const IP_DEF: &str = "10.61.";
+//const IP_DEF: &str = "192.168.";
 
 use std::sync::Mutex;
 //use serde::{Deserialize, Serialize};
