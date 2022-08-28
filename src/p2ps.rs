@@ -2,6 +2,7 @@ use actix_web::{get, post, App, HttpRequest, HttpResponse, HttpServer};
 extern crate http;
 //const IP_DEF: &str = "10.61.";
 const IP_DEF: &str = "192.168.";
+
 use std::sync::Mutex;
 //use serde::{Deserialize, Serialize};
 
@@ -135,7 +136,7 @@ pub async fn server() -> std::io::Result<()> {
 
     // starts the server 
     HttpServer::new(|| App::new().service(pong).service(get_chain).service(new_block).service(find))
-        .bind(":8080")?
+        .bind(":3000")?
         .run()
         .await
 }
@@ -192,7 +193,7 @@ impl Network{
     pub fn new_block(&mut self, b: Block){
         CHAIN.lock().unwrap().add_block(b.clone());
         for x in self.users.clone(){
-            match attohttpc::post(format!("http://{}:8080/block",x,))
+            match attohttpc::post(format!("http://{}:3000/block",x,))
             .header("downloading", "file")
             .text(serde_json::to_string(&b).unwrap())
             .send(){
@@ -210,8 +211,8 @@ impl Network{
         let c = CHAIN.lock().unwrap().clone();
 
         for x in self.users.clone(){
-            println!("Sending chain to user...");
-            attohttpc::post(format!("http://{}:8080/chain",x ))
+            println!("Sending chain to user... {}",x);
+            attohttpc::post(format!("http://{}:3000/chain",x ))
             .header("sending", "file")
             .text(serde_json::to_string(&c).unwrap())
             .send().unwrap();
@@ -226,20 +227,20 @@ fn sweep() {
         // let mut thrs: Vec<JoinHandle<()>> = Vec::new();
         for x in 0..255 {
             thread::spawn(move || {
-                match attohttpc::get(format!("http://{}{}.{}:8080/find", IP_DEF, y, x))
+                match attohttpc::get(format!("http://{}{}.{}:3000/find", IP_DEF, y, x))
                     .header("downloading", "file")
                     .send()
                 {
                     Err(_) => {
                         // println!("{:#?}", a);
-                        // println!("http://192.168.68.{}:8080/find", x);
+                        // println!("http://192.168.68.{}:3000/find", x);
                     }
                     Ok(_) => {
                         //println!("{:#?}", a);
                         NETWORK.lock().unwrap().add_user(format!("{}{}.{}", IP_DEF, y, x));
                        // add_ip(format!("{}{}.{}", IP_DEF, y, x));
 
-                        // println!("http://192.168.68.{}:8080/find", x);
+                        // println!("http://192.168.68.{}:3000/find", x);
                         println!("Found user");
 
 
