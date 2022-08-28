@@ -1,6 +1,7 @@
 use actix_web::{get, post, App, HttpRequest, HttpResponse, HttpServer};
 extern crate http;
-const IP_DEF: &str = "10.61.";
+//const IP_DEF: &str = "10.61.";
+const IP_DEF: &str = "192.168.";
 use std::sync::Mutex;
 //use serde::{Deserialize, Serialize};
 
