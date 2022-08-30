@@ -23,9 +23,9 @@ impl Chain {
     }
     // get the latest block that does not have main = true
     pub fn get_latest_non_main(&self)->Block{
-        for block in self.chain.clone(){
+        for block in self.chain.clone().iter().rev(){
             if !block.main{
-                return block
+                return o!(block)
             }
         }
         panic!("how did he we get here")
@@ -66,6 +66,7 @@ impl Chain {
     pub fn change_bg(&self){
         extern crate wallpaper;
         let block = self.get_latest_non_main();
+        println!("change bg to: {}",&block.bg_path);
         wallpaper::set_from_url(&block.bg_path).unwrap();
     }
 }
