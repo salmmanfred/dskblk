@@ -57,6 +57,8 @@ async fn get_chain(h: HttpRequest, req: String) -> HttpResponse {
     
         CHAIN.lock().unwrap().change_bg();
     }
+
+    // sends the local chain back to the sender but on /chainF so there is not an endless loop
     if let Some(val) = h.peer_addr() {
         //  println!("Address {:?}", val.ip());
         println!("sending back");
@@ -88,6 +90,7 @@ async fn get_chain(h: HttpRequest, req: String) -> HttpResponse {
         .body("Ok")
 }
 
+// recives a chain after sending a chain
 #[post("/chainF")]
 async fn get_chain_f( req: String) -> HttpResponse {
 
