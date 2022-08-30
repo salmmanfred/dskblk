@@ -2,6 +2,7 @@
     TODO: Need to fix the computer not being able to send chain some of the times
     TODO: Need to make sure that there is only one chain
     TODO: Fix so that computer that has been on longer can send chain back not just connecting computer
+    TODO: UI (Maybe)
 
 */
 
@@ -50,7 +51,7 @@ async fn pong() -> HttpResponse {
 
 //To share chains between computers this web page is used
 #[post("/chain")]
-async fn get_chain(req: String) -> HttpResponse {
+async fn get_chain(h: HttpRequest, req: String) -> HttpResponse {
     let x: Chain = serde_json::from_str(&req).expect("msg");
     println!("recived chain");
     if x.validate_chain(){
@@ -59,7 +60,51 @@ async fn get_chain(req: String) -> HttpResponse {
     
         CHAIN.lock().unwrap().change_bg();
     }
+    if let Some(val) = h.peer_addr() {
+        //  println!("Address {:?}", val.ip());
+        println!("sending back");
+        let ch = CHAIN.lock().unwrap().clone();
 
+
+
+        let ip = val.ip().to_string();
+        println!("{ip}");
+        thread::spawn(move || {
+        match attohttpc::post(format!("http://{}:3000/chainF",ip,))
+        .header("downloading", "file")
+        .text(serde_json::to_string(&ch).unwrap())
+        .send(){
+            Err(a) =>{
+                // kick the person because they are no longer active 
+                println!("Failed to send chain back");
+                println!("{:#?}",a);
+            }
+            Ok(_) =>{
+                //ok
+            }
+        }; 
+    });
+    };
+    HttpResponse::Ok()
+        .content_type("text/plain")
+        .header("test", "sample")
+        .body("Ok")
+}
+
+#[post("/chainF")]
+async fn get_chain_f( req: String) -> HttpResponse {
+
+
+
+    let x: Chain = serde_json::from_str(&req).expect("msg");
+    println!("recived chain F");
+    if x.validate_chain(){
+        let big = CHAIN.lock().unwrap().comp_chain(x);
+        CHAIN.lock().unwrap().chain = big.chain;
+    
+        CHAIN.lock().unwrap().change_bg();
+    }
+    
     
 
 
@@ -144,7 +189,11 @@ pub async fn server() -> std::io::Result<()> {
     });
 
     // starts the server 
-    HttpServer::new(|| App::new().service(pong).service(get_chain).service(new_block).service(find))
+    HttpServer::new(|| App::new().service(pong)
+    .service(get_chain)
+    .service(new_block)
+    .service(find)
+    .service(get_chain_f))
         .bind(":3000")?
         .run()
         .await
