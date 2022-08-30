@@ -1,7 +1,4 @@
 /*
-    TODO: Need to fix the computer not being able to send chain some of the times
-    TODO: Need to make sure that there is only one chain
-    TODO: Fix so that computer that has been on longer can send chain back not just connecting computer
     TODO: UI (Maybe)
 
 */
